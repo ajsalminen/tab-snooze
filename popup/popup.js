@@ -111,9 +111,6 @@ $(document).ready(function() {
 
         // Calculate wake-up time
         switch(timeName) {
-            case "ten-seconds":
-                result = new Date(Date.now() + 10 * second);
-                break;
             case "later-today":
                 result = new Date(roundedNow.getTime() + parseInt(settings["later-today"]) * hour);
                 break;
@@ -230,4 +227,3 @@ $(document).ready(function() {
         });
     }
 });
-
