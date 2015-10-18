@@ -115,14 +115,37 @@ $(document).ready(function() {
                 result = new Date(roundedNow.getTime() + parseInt(settings["later-today"]) * hour);
                 break;
             case "this-evening":
+            if(result.getHours() > getSettingsTime(settings["end-day"])) {
+                result.setDate(result.getDate() + 1);
+            }
                 setSettingsTime(result, settings["end-day"]);
                 break;
             case "tomorrow-evening":
+            if(result.getHours() > 5) {
                 result.setDate(result.getDate() + 1);
+            }
+                setSettingsTime(result, settings["end-day"]);
+                break;
+            case "2-days-evening":
+            if(result.getHours() > 5) {
+                result.setDate(result.getDate() + 2);
+            } else {
+                result.setDate(result.getDate() + 1);
+            }
                 setSettingsTime(result, settings["end-day"]);
                 break;
             case "tomorrow":
+            if(result.getHours() > 5) {
                 result.setDate(result.getDate() + 1); // Automatically updates months
+            }
+            case "2-days-morning":
+            if(result.getHours() > 5) {
+                result.setDate(result.getDate() + 2);
+            } else {
+                result.setDate(result.getDate() + 1);
+            }
+                break;
+
                 break;
             case "this-weekend":
                 var daysToWeekend = daysToNextDay(result.getDay(), settings["weekend-begin"])
@@ -132,6 +155,9 @@ $(document).ready(function() {
                 console.log("calculating next-week");
                 var daysToWeek = daysToNextDay(result.getDay(), settings["week-begin"]);
                 result.setDate(result.getDate() + daysToWeek);
+                break;
+            case "in-a-week":
+                result.setMonth(result.getDate() + 7);
                 break;
             case "in-a-month":
                 result.setMonth(result.getMonth() + 1);
@@ -155,17 +181,16 @@ $(document).ready(function() {
             return;
         }
 
-        if(nextDay < currentDay) {
+        if(nextDay <= currentDay) {
             return (7 + nextDay) - currentDay;
         } else {
             return nextDay - currentDay;
         }
     }
 
-    function setSettingsTime(result, settingsTime) {
+    function getSettingsTime(settingsTime) {
         var timeParts = settingsTime.split(/[\s:]+/);
         var hour = parseInt(timeParts[0]);
-        var minute = parseInt(timeParts[1]);
         var meridian = timeParts[2];
 
         if(meridian == "AM" && hour == 12) {
@@ -176,7 +201,14 @@ $(document).ready(function() {
             hour = hour + 12;
         }
 
+        return hour;
+    }
+
+    function setSettingsTime(result, settingsTime) {
+        var hour = getSettingsTime(settingsTime);
+        var minute = parseInt(timeParts[1]);
         result.setHours(hour, minute, 0, 0);
+
         return result;
     }
 
@@ -221,7 +253,20 @@ $(document).ready(function() {
                     console.log("pressed d");
                     buttons[8].click();
                     break;
+                case 120:
+                    console.log("pressed z");
+                    buttons[9].click();
+                    break;
+                case 122:
+                    console.log("pressed x");
+                    buttons[10].click();
+                    break;
+                case 99:
+                    console.log("pressed c");
+                    buttons[11].click();
+                    break;
                 default:
+                console.log(e.keyCode);
                     break;
             }
         });

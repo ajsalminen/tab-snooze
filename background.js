@@ -8,6 +8,8 @@
 
 console.log("Welcome to background.js");
 var snoozedTabs, settings;
+var notificationActive = false;
+
 init();
 
 
@@ -55,7 +57,7 @@ function init() {
 
 /**
  * Snoozes a tab for later.
- * 
+ *
  * @param  {Tab} tab        A Tab object representing the current tab
  * @param  {int} popTime    Time object representing when the tab should resurface
  */
@@ -80,7 +82,10 @@ function popCheck() {
         return;
     }
 
-    clearAllNotifications();
+    if(notificationActive){
+        return;
+    }
+    // clearAllNotifications();
 
     // Get snoozed tabs and settings
     snoozedTabs = getSnoozedTabs();
@@ -97,7 +102,7 @@ function popCheck() {
     for(var i = 0; i < timestamps.length - 1; i++) {
         var time = timestamps[i];
         var now = Date.now();
-        
+
         if(time < now) {
             times.push(time);
             tabs = tabs.concat(snoozedTabs[time]);
@@ -109,6 +114,10 @@ function popCheck() {
     if(tabs.length > 0) {
         // Show notification
         showNotification(tabs, function(id) {
+            notificationActive = true;
+            chrome.notifications.onClosed.addListener(function(nid, byUser) {
+                notificationActive = false;
+            }
             chrome.notifications.onButtonClicked.addListener(function(nid, buttonIndex) {
                 // Pop tabs right now...
                 if(nid == id && buttonIndex == 0) {
@@ -121,7 +130,7 @@ function popCheck() {
                             popTabs(tabs, times, w);
                         });
                     }
-                } 
+                }
                 // ... or snooze them again
                 else if(nid == id && buttonIndex == 1) {
                     console.log("Snoozed for later!");
@@ -135,6 +144,7 @@ function popCheck() {
                         changeSnoozeTime(tabs[i], popTime);
                     }
                 }
+            notificationActive = false;
             });
         })
     }
@@ -174,7 +184,7 @@ function clearAllNotifications() {
         for(var i = 0; i < notifications.length; i++) {
             var id = notifications[i];
             chrome.notifications.clear(id, function() {
-                
+
             });
         }
     });
@@ -193,7 +203,7 @@ function popTabs(tabs, times, w) {
     for(var i = 0; i < tabs.length; i++) {
         createTab(tabs[i], w);
     }
-    
+
     // Delete keys
     for(var i = 0; i < times.length; i++) {
         delete snoozedTabs[times[i]];
@@ -266,7 +276,7 @@ function removeSnoozedTab(tab, snoozedTabs) {
         console.log("Tab not found, returning");
         return;
     }
-    
+
     // Update pop set
     popSet.splice(tabIndex, 1);
 
@@ -303,7 +313,7 @@ function changeSnoozeTime(tab, newTime) {
 }
 
 
-/** 
+/**
  * Updates or hides the badge count of number of snoozed tabs.
  */
 function updateBadgeText() {
