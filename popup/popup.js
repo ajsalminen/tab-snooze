@@ -157,7 +157,7 @@ $(document).ready(function() {
                 result.setDate(result.getDate() + daysToWeek);
                 break;
             case "in-a-week":
-                result.setMonth(result.getDate() + 7);
+                result.setDate(result.getDate() + 7);
                 break;
             case "in-a-month":
                 result.setMonth(result.getMonth() + 1);
