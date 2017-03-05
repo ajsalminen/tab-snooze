@@ -111,7 +111,7 @@ $(document).ready(function() {
 
         // Calculate wake-up time
         switch(timeName) {
-            case "later-today":
+        case "later-today":
                 result = new Date(roundedNow.getTime() + parseInt(settings["later-today"]) * hour);
                 break;
             case "this-evening":
@@ -126,7 +126,7 @@ $(document).ready(function() {
             }
                 setSettingsTime(result, settings["end-day"]);
                 break;
-            case "2-days-evening":
+        case "2-days-evening":
             if(result.getHours() > 5) {
                 result.setDate(result.getDate() + 2);
             } else {
@@ -137,16 +137,17 @@ $(document).ready(function() {
             case "tomorrow":
             if(result.getHours() > 5) {
                 result.setDate(result.getDate() + 1); // Automatically updates months
+            } else {
+                result.setDate(result.getDate());
             }
-            case "2-days-morning":
+            break;
+        case "2-days-morning":
             if(result.getHours() > 5) {
                 result.setDate(result.getDate() + 2);
             } else {
                 result.setDate(result.getDate() + 1);
             }
-                break;
-
-                break;
+            break;
             case "this-weekend":
                 var daysToWeekend = daysToNextDay(result.getDay(), settings["weekend-begin"])
                 result.setDate(result.getDate() + daysToWeekend);
@@ -206,6 +207,7 @@ $(document).ready(function() {
 
     function setSettingsTime(result, settingsTime) {
         var hour = getSettingsTime(settingsTime);
+        var timeParts = settingsTime.split(/[\s:]+/);
         var minute = parseInt(timeParts[1]);
         result.setHours(hour, minute, 0, 0);
 
