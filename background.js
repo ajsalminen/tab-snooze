@@ -137,7 +137,7 @@ function popCheck() {
                     for(var i = 0; i < tabs.length; i++) {
                         var tab = tabs[i];
                         console.log(tab);
-                        var popTime = new Date(tab.popTime);
+                        var popTime = new Date();
                         console.log("popTime", popTime);
                         popTime.setHours(popTime.getHours() + 1);
                         console.log("new time", popTime);
