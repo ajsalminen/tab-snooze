@@ -117,7 +117,7 @@ function popCheck() {
             notificationActive = true;
             chrome.notifications.onClosed.addListener(function(nid, byUser) {
                 notificationActive = false;
-            }
+            });
             chrome.notifications.onButtonClicked.addListener(function(nid, buttonIndex) {
                 // Pop tabs right now...
                 if(nid == id && buttonIndex == 0) {
