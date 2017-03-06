@@ -116,6 +116,20 @@ function popCheck() {
         showNotification(tabs, function(id) {
             notificationActive = true;
             chrome.notifications.onClosed.addListener(function(nid, byUser) {
+                // ... or snooze them again
+                if(nid == id) {
+                    console.log("Snoozed for later!");
+                    var limit = tabs.length;
+                    for(var i = 0; i < limit; i++) {
+                        var tab = tabs[i];
+                        console.log(tab);
+                        var popTime = new Date();
+                        console.log("popTime", popTime);
+                        popTime.setHours(popTime.getHours() + 1);
+                        console.log("new time", popTime);
+                        changeSnoozeTime(tabs[i], popTime);
+                    }
+                }
                 notificationActive = false;
             });
             chrome.notifications.onButtonClicked.addListener(function(nid, buttonIndex) {
@@ -134,7 +148,11 @@ function popCheck() {
                 // ... or snooze them again
                 else if(nid == id && buttonIndex == 1) {
                     console.log("Snoozed for later!");
-                    for(var i = 0; i < tabs.length; i++) {
+                    var limit = tabs.length - 50;
+                    if(limit < 0){
+                        limit = 0;
+                    }
+                    for(var i = 0; i < limit; i++) {
                         var tab = tabs[i];
                         console.log(tab);
                         var popTime = new Date();
@@ -168,8 +186,9 @@ function showNotification(tabs, callback) {
         buttons: [{
             title: "Open Now"
         }, {
-            title: "Later"
-        }]
+            title: "Postpone all but 50"
+        }
+                 ]
     }, function(id) {
         callback(id);
     });
