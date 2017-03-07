@@ -162,9 +162,10 @@ function popCheck() {
                         changeSnoozeTime(tabs[i], popTime);
                     }
                 }
-            notificationActive = false;
+                notificationActive = false;
+                chrome.notifications.clear(nid);
             });
-        })
+        });
     }
 }
 
